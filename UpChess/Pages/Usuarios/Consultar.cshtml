@@ -1,0 +1,24 @@
+﻿@page
+@model WebApplication4.Pages.Usuarios.ConsultarModel
+@{
+    ViewData["Title"] = "Consultar";
+}
+
+<h2>Consultar</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label>Cpf</label>
+        <input type="text" name="Cpf" />
+    </div>
+    <button>Buscar</button>
+</form>
+@if (ViewData["usuario"] != null)
+{
+    <div class="card">
+        <div class="card-body">
+            @(((WebApplication4.Data.Usuario)ViewData["usuario"]).Nome)
+        </div>
+    </div>
+}
+

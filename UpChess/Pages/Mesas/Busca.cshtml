@@ -1,0 +1,50 @@
+﻿@page
+@using WebApplication4.Data;
+
+@model WebApplication4.Pages.Mesas.BuscaModel
+@{
+    ViewData["Title"] = "Busca";
+}
+<h2>Busca</h2>
+<form method="post" id="formulario">
+    <div class="form-group">
+        <label>Cpf do Usuário</label>
+        <input type="text" name="Cpf" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Nome do Usuário</label>
+        <input type="text" name="NomeUsuario" class="form-control" />
+    </div>
+    <button type="button" onclick="buscar()" class="btn btn-primary btn-sm">Buscar</button>
+</form>
+<form method="post" id="lista"></form>
+@section Scripts {
+    <script>
+        function buscar() {
+            $.post('ListaBusca', $('#formulario').serialize(), function (resp) { $('#lista').html(resp) });
+        }
+        function entrar(mesaId) {
+            $.ajax({
+                type: 'POST',
+                accepts: 'application/json',
+                url: '/api/Busca',
+                contentType: 'application/json',
+                data: JSON.stringify({ MesaId: mesaId }),
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(xhr.statusText);
+                },
+                success: function (resp) {
+                    if (resp.status == 0) { // ok
+                        alert('Ok. Usuário entrou na mesa.');
+                        document.location.href = resp.url;
+                    } else if (resp.status) {
+                        alert(resp.status + ' - ' + resp.mensagem);
+                    } else {
+                        alert('Erro de comunicação');
+                        console.log(resp);
+                    }
+                }
+            });
+        }
+    </script>
+}

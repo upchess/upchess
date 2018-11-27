@@ -1,0 +1,50 @@
+﻿@using Microsoft.AspNetCore.Http
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            @if (Context.Session.GetString("usuarioNome") != null)
+            {
+                <li class="nav-item">
+                    <a class="nav-link" href="/Usuarios">Usuarios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="/Usuarios/Consultar">Consultar</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                        Jogos
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/Mesas/MinhasMesas">Minhas Mesas</a>
+                        <a class="dropdown-item" href="/Mesas/Busca">Procurar Mesa</a>
+                    </div>
+                </li>
+            }
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            @if (Context.Session.GetString("usuarioNome") == null)
+            {
+                <li class="nav-item">
+                    <a class="nav-link" href="/Usuarios/Login">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/Usuarios/Cadastrar">Cadastrar</a>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="/Usuarios/Logout" id="navbarDropdown" role="button" data-toggle="dropdown">Opções</a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/Usuarios/Logout">Sair</a>
+                        <a class="dropdown-item" href="/Usuarios/Logout">Perfil</a>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</nav>

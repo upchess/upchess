@@ -1,0 +1,94 @@
+﻿@page
+@model WebApplication4.Pages.Usuarios.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Usuario</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.Nome)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.Nome)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.Senha)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.Senha)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.Email)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.DataNascimento)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.DataNascimento)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.Cpf)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.Cpf)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.Cep)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.Cep)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.Logradouro)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.Logradouro)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.Numero)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.Numero)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.Complemento)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.Complemento)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.Bairro)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.Bairro)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.Cidade)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.Cidade)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Usuario.Uf)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Usuario.Uf)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="Usuario.UsuarioId" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

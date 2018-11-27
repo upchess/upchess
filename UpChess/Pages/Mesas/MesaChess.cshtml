@@ -1,0 +1,92 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@using WebApplication4.Data
+
+@model WebApplication4.Pages.Mesas.MesaChessModel
+@{
+    ViewData["Title"] = "UP Chess";
+
+}
+@section head
+    {
+    <link href="~/css/chessboard-0.3.0.css" rel="stylesheet" />
+    <link href="~/css/Chess.css" rel="stylesheet" />
+}
+
+<h2>MesaChess</h2>
+@{
+    int playerId = HttpContext.Session.GetInt32("usuarioId") ?? 0;
+    int mesaId = Model.MesaId;
+    int whiteUserId = Model.MesaConfig.WhiteUserId;
+    bool white = playerId == whiteUserId;
+    string me = "ninguém";
+    string other = "ninguém";
+    string estado = Model.MesaState.Estado;
+    string historico = Model.MesaState.Historico;
+    foreach (MesaUsuario um in Model.MesaState.MesasUsuarios)
+    {
+        if (um.UsuarioId == playerId)
+        {
+            me = um.Usuario.Nome;
+        }
+        else
+        {
+            other = um.Usuario.Nome;
+        }
+    }
+}
+<div class="row">
+    <div class="col-1 playerName-col"></div>
+    <div class="col-10 playerName-col" id="otherName">@other</div>
+    <div class="col-1 playerName-col"></div>
+</div>
+<div class="row">
+    <!-- tabuleiro -->
+    <div id="board" style="margin-left:20px;flex: 0 0 400px;max-width:400px;"></div>
+    <!-- end tabuleiro -->
+    <div class="col-3">
+        <pre id="PGN" style="height:400px" readonly="readonly"></pre>
+    </div>
+</div>
+<div class="row">
+    <div class="col-1 playerName-col"></div>
+    <div class="col-10 playerName-col" id="myName">@me</div>
+    <div class="col-1 playerName-col"></div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="terminoModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="terminoModalLabel">Fim de jogo</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="terminoModalBody">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script>
+        var playerId = @playerId;
+        var mesaId = @mesaId;
+        var whiteUserId = @whiteUserId;
+        var white = playerId == whiteUserId;
+        var estado = '@Html.Raw(estado)';
+        var historico = '@Html.Raw(historico)' //document.querySelector('#PGN').value;
+
+        var myNameDiv = document.querySelector("#myName");
+        var otherNameDiv = document.querySelector("#otherName");
+        var playerTurnDivClass = "highlight-playerName";
+    </script>
+    <script src="~/js/chessboard-0.3.0.js"></script>
+    <script src="~/js/chess.js"></script>
+    <script src="~/js/ChessControl.js"></script>
+}

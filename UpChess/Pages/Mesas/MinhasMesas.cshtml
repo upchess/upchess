@@ -1,0 +1,110 @@
+﻿@page
+@using WebApplication4.Data; @* Mesa, MesaUsuario, Usuario *@
+
+@model WebApplication4.Pages.Mesas.MinhasMesasModel
+@{
+    ViewData["Title"] = "MinhasMesas";
+}
+
+<h2>MinhasMesas</h2>
+<div class="card card-body">
+    <form method="post">
+        <div class="form-group">
+            <label for="NomeMesa">Nome da mesa</label>
+            <input type="text" id="NomeMesa" />
+            <span asp-validation-for="NomeMesa"
+                  class="text-danger"></span>
+        </div>
+        <button type="button" onclick="criarMesa()" class="btn btn-sm">Criar Nova</button>
+    </form>
+</div>
+<form method="post" id="formMesas">
+    <table class="table table-hover">
+        <thead>
+        <th>Nome</th>
+        <th>Usuários</th>
+        <th></th>
+        </thead>
+        <tbody>
+            @foreach (Mesa mesa in Model.mesas)
+            {
+                <tr>
+                    <td>@mesa.Nome</td>
+                    <td>
+                        @foreach (MesaUsuario mu in mesa.MesasUsuarios)
+                        {
+                            @if (mesa.MesasUsuarios.First() != mu)
+                            {
+                                @:,
+                            }
+                            @mu.Usuario.Nome
+                        }
+                    </td>
+                    <td>
+                        <button asp-page-handler="Jogar" class="btn btn-sm" name="mesaId" value="@mesa.MesaId">
+                            Jogar
+                        </button>
+                        <button type="button" onclick="sairMesa(@mesa.MesaId)" class="btn btn-primary btn-sm">Sair</button>
+                        <button type="button" onclick="excluirMesa(@mesa.MesaId)" class="btn btn-primary btn-sm">Excluir</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+@section Scripts {
+    <script>
+        function criarMesa() {
+            let nome = $('#NomeMesa').val();
+            $.ajax({
+                type: 'POST',
+                accepts: 'application/json',
+                url: '/api/MinhasMesas',
+                contentType: 'application/json',
+                data: JSON.stringify({ Nome: nome }),
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(xhr.statusText);
+                },
+                success: function (data) {
+                    if (data && data.resp) {
+                        alert(data.resp);
+                        $('#formMesas').load('/mesas/ListaMinhasMesas');
+                    } else {
+                        alert('Ocorreu um erro de comunicação');
+                    }
+                }
+            });
+        }
+        function sairMesa(mesaId) {
+            let nome = $('#NomeMesa').val();
+            // irá enviar o parâmetro mesaId no Body no formato form-urlencoded
+            $.post('/api/MinhasMesas/sair', { mesaId: mesaId })
+                .done(function (data) {
+                    if (data && data.resp) {
+                        alert(data.resp);
+                        $('#formMesas').load('/mesas/ListaMinhasMesas');
+                    } else {
+                        alert('Ocorreu um erro de comunicação');
+                    }
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    alert(xhr.statusText);
+                });
+        }
+        function excluirMesa(mesaId) {
+            // irá enviar o parâmetro mesaId no Body no formato form-urlencoded
+            $.post('/api/MinhasMesas/excluir', { mesaId: mesaId })
+                .done(function (data) {
+                    if (data && data.resp) {
+                        alert(data.resp);
+                        $('#formMesas').load('/mesas/ListaMinhasMesas');
+                    } else {
+                        alert('Ocorreu um erro de comunicação');
+                    }
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    alert(xhr.statusText);
+                });
+        }
+    </script>
+}

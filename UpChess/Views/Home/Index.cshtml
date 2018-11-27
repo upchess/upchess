@@ -1,0 +1,13 @@
+﻿@model WebApplication4.Controllers.MeuModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<form method="post">
+    Nome:@Html.TextBoxFor(m => m.nome, null, new { @class="form-control" })
+    <br />
+    Sexo:@Html.DropDownListFor(m=>m.sexo, (SelectList)ViewData["opcoes"])
+    <button>enviar</button>
+</form>

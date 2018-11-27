@@ -1,0 +1,38 @@
+﻿@page
+@using WebApplication4.Data; @* Mesa, MesaUsuario, Usuario *@
+@model WebApplication4.Pages.Mesas.ListaMinhasMesasModel
+@{
+    Layout = "";
+}
+<table class="table table-hover">
+    <thead>
+    <th>Nome</th>
+    <th>Usuários</th>
+    <th></th>
+    </thead>
+    <tbody>
+        @foreach (Mesa mesa in Model.mesas)
+        {
+            <tr>
+                <td>@mesa.Nome</td>
+                <td>
+                    @foreach (MesaUsuario mu in mesa.MesasUsuarios)
+                    {
+                        @if (mesa.MesasUsuarios.First() != mu)
+                        {
+                            @:,
+                        }
+                        @mu.Usuario.Nome
+                    }
+                </td>
+                <td>
+                    <button asp-page-handler="Jogar" class="btn btn-sm" name="mesaId" value="@mesa.MesaId">
+                        Jogar
+                    </button>
+                    <button type="button" onclick="sairMesa(@mesa.MesaId)" class="btn btn-primary btn-sm">Sair</button>
+                    <button type="button" onclick="excluirMesa(@mesa.MesaId)" class="btn btn-primary btn-sm">Excluir</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

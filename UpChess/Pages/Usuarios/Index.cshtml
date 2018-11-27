@@ -1,0 +1,102 @@
+﻿@page
+@model WebApplication4.Pages.Usuarios.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].Senha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].DataNascimento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].Cpf)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].Cep)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].Logradouro)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].Numero)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].Complemento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].Bairro)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].Cidade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario[0].Uf)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Usuario) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Senha)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataNascimento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cpf)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cep)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Logradouro)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Numero)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Complemento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bairro)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cidade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Uf)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.UsuarioId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.UsuarioId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.UsuarioId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

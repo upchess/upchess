@@ -1,0 +1,106 @@
+﻿@page
+@model WebApplication4.Pages.Usuarios.CadastrarModel
+@{
+    ViewData["Title"] = "Cadastrar";
+}
+<div class="container">
+    <h2>Cadastrar</h2>
+
+    <form onsubmit="return valida()" method="post">
+        <div class="form-group">
+            <div class="form-group">
+                <label asp-for="usuario.Nome">Nome</label>
+                <input type="text" asp-for="usuario.Nome" class="form-control" placeholder="Nome" />
+                <span asp-validation-for="usuario.Nome" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="usuario.Email">Email</label>
+                <input type="text" asp-for="usuario.Email" class="form-control" placeholder="Email" />
+                <span asp-validation-for="usuario.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="usuario.Cpf">Cpf</label>
+                <input type="text" name="usuario.Cpf" value="@Model.usuario.Cpf" class="form-control" placeholder="Cpf" />
+                <span asp-validation-for="usuario.Cpf" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="usuario.DataNascimento">Data de Nascimento</label>
+                <input type="date" asp-for="usuario.DataNascimento" class="form-control" placeholder="DataNascimento" />
+                <span asp-validation-for="usuario.DataNascimento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="usuario.Senha">Senha</label>
+                <input type="password" id="senha" name="usuario.Senha" class="form-control" placeholder="Senha" />
+            </div>
+            <div class="form-group">
+                <label>Confirmação</label>
+                <input type="password" id="confirmacao" class="form-control" placeholder="Senha" />
+            </div>
+            <hr />
+            <div class="form-group">
+                <label asp-for="usuario.Cep">CEP</label>
+                <input type="text" asp-for="usuario.Cep" id="Cep" class="form-control" placeholder="CEP" />
+                <span asp-validation-for="usuario.Cep" class="text-danger"></span>
+            </div>
+            <button class="btn" type="button" onclick="buscaEndereco()">Buscar</button>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body" id="ender">
+                    texto qualquer
+                </div>
+            </div>
+            <div class="collapse" id="collapseForm">
+                <label>Endereço</label>
+                <input type="text" name="usuario.Logradouro" id="logradouro" class="form-control" />
+                <label>Numero</label>
+                <input type="text" name="usuario.Numero" class="form-control" />
+                <label>Complemento</label>
+                <input type="text" name="usuario.Complemento" class="form-control" />
+                <label>Bairro</label>
+                <input type="text" name="usuario.Bairro" id="bairro" class="form-control" />
+                <label>Cidade</label>
+                <input type="text" name="usuario.Cidade" id="cidade" class="form-control" />
+                <label>UF</label>
+                <input type="text" name="usuario.Uf" id="uf" class="form-control" />
+            </div>
+            <hr />
+            <button class="btn btn-primary">Enviar</button>
+        </div>
+</form>
+</div>
+<script>
+    function buscaEndereco() {
+        let cep = document.querySelector("#Cep");
+        let value = cep.value;
+        value = value.replace("-", "");
+        $.getJSON("https://viacep.com.br/ws/" + value + "/json/",
+            function (resp) {
+                if (resp.erro) {
+                    // cep não encontrado
+                    document.querySelector("#ender").innerHTML="Cep não encontrado";
+                    $('#collapseExample').collapse('show');
+                    $('#collapseForm').collapse('hide');
+                } else {
+                    // preenche os campos do endereço
+                    document.querySelector("#logradouro").value = resp.logradouro;
+                    document.querySelector("#bairro").value = resp.bairro;
+                    document.querySelector("#cidade").value = resp.localidade;
+                    document.querySelector("#uf").value = resp.uf;
+                    $('#collapseExample').collapse('hide');
+                    $('#collapseForm').collapse('show');
+                }
+            });
+    }
+    function valida() {
+        let senha = document.getElementById("senha");
+        let confirmacao = document.getElementById("confirmacao");
+        if (senha.value.length < 4) {
+            alert("A Senha deve ter pelo menos 4 caracteres");
+            return false;
+        }
+        if (senha.value != confirmacao.value) {
+            alert("A Senha e a confirmacao devem ser iguais");
+            return false;
+        }
+        return true;
+    }
+</script>
