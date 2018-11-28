@@ -40,14 +40,32 @@ namespace WebApplication4
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             if (CurrentEnvironment.IsDevelopment()) {
+                // development
                 services.AddDbContext<WebApplication4Context>(options =>
                         options.UseSqlServer(Configuration.GetConnectionString("WebApplication4Context")));
             }
             else
             {
                 // staging e production
+                // Heroku fornece uma connection URL para PostgreSQL via variável de ambiente
+                var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+                // Como essa url de conexão é feita para o driver JDBC, precisamos quebrar a URL em pedaços
+                connUrl = connUrl.Replace("postgres://", string.Empty);
+
+                var pgUserPass = connUrl.Split("@")[0];
+                var pgHostPortDb = connUrl.Split("@")[1];
+                var pgHostPort = pgHostPortDb.Split("/")[0];
+
+                var pgDb = pgHostPortDb.Split("/")[1];
+                var pgUser = pgUserPass.Split(":")[0];
+                var pgPass = pgUserPass.Split(":")[1];
+                var pgHost = pgHostPort.Split(":")[0];
+                var pgPort = pgHostPort.Split(":")[1];
+                // Depois de quebrar, precismos remontar no formato connection string
+                string connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb}";
                 services.AddDbContext<WebApplication4Context>(options =>
-                        options.UseNpgsql(Configuration.GetConnectionString("WebApplication4Context")));
+                        options.UseNpgsql(connStr));
             }
             services.AddScoped<IJogoService, JogoService>();
         }

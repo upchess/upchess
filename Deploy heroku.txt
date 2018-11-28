@@ -85,6 +85,15 @@ heroku
 2) Criar conta no Heroku
 	http://heroku.com
 
+3) Incluir o PostgreSQL na sua conta Heroku (versão hobby-dev que limita a quantidade de registros)
+	Abrir CMD
+		heroku addons:create heroku-postgresql:hobby-dev -a <app>
+		heroku addons:create heroku-postgresql:hobby-dev -a <app>-staging
+	Ver dados do acesso ao PostgreSQL
+		heroku config -a <app>
+		heroku config -a <app>-staging
+
+	Baixar pgadmin portable e instalar (https://sourceforge.net/projects/pgadminportable/
 3) Logar no heroku com o CLI
 	Abrir CMD
 		heroku login
@@ -99,39 +108,35 @@ heroku
 6) Configurar o ambiente do Heroku para indicar que é produção
 	execute no cmd
 		heroku config:set ASPNETCORE_ENVIRONMENT=Production -a <app>
-		heroku config:set ASPNETCORE_ENVIRONMENT=Production -a <app>-staging
+		heroku config:set ASPNETCORE_ENVIRONMENT=Staging -a <app>-staging
 7)
 Criar um pipeline
-	execute no cmd
+	- execute no cmd
 		heroku pipelines:create -a <app>
-	para a pergunta "? Pipeline name" digite o nome da sua aplicação (<app>) ou aceite o padrão. Vamos chamar este nome de <pipeline> neste documento.
-	para a pergunta "? Stage of upchess (Use arrow keys)" aceite o padrão (production) teclando enter
-	A segunda pergunta pede qual é o estágio da aplicação que está sendo configurada (produção), precisamos agora incluir a aplicação de staging.
-	execute no cmd substituindo <pipeline> pelo nome do pipeline e <app> pelo nome da aplicação.
+		para a pergunta "? Pipeline name" digite o nome da sua aplicação (<app>) ou aceite o padrão. Vamos chamar este nome de <pipeline> neste documento.
+		para a pergunta "? Stage of upchess (Use arrow keys)" aceite o padrão (production) teclando enter
+		A segunda pergunta pede qual é o estágio da aplicação que está sendo configurada (produção).
+	- Precisamos agora incluir a aplicação de staging.
+		execute no cmd substituindo <pipeline> pelo nome do pipeline e <app> pelo nome da aplicação.
 		heroku pipelines:add <pipeline> -a <app>-staging
-	para a pergunta "? Stage of upchess-staging (Use arrow keys)" selecione  (staging).
+		para a pergunta "? Stage of upchess-staging (Use arrow keys)" selecione  (staging).
 
 Conectar o pipeline com o github
 	execute no cmd
-		heroku pipelines:connect <pipeline> -r github.com/upchess/upchess
+		heroku pipelines:connect <pipeline> -r <repo>
+	exemplo:
+		se a URL do repositório é https://github.com/aluno/webproject então o comando é
+		heroku pipelines:connect <pipeline> -r aluno/webproject
 	
-	Na página do Heroku clicar em "NEW" (canto superior esquerdo) e depois em "Create new Pipeline".
-	Preencha o campo Pipeline Name com um nome que represente seu projeto
-	Em "Connect to Github" clique em "Search" para selecionar o repositório do Github que contém o projeto.
-	Selecione seu projeto no GitHub e clique em "Connect" e depois clique em "Create Pipeline".
-Incluir a aplicação no pipeline
-	Na tela de configuração do pipeline, napágina do Heroku, existem os quadro "Staging" e "Production".
-	No quadro "Staging" clique em "Add app" e selecione a sua aplicação.
-	
+Fazer um deploy manual
+	Entre na página do Heroku e selecione seu pipeline
+	No grupo Staging, abra o menu (botão no canto superior esquerdo do grupo) e selecione "Deploy a branch".
+	Selecione "Master" e clique no botão "Deploy"
+	Aguarde a compilação/build e clique em "View Log", no final do log deve existir mensagens como:
+								https://upchess-staging.herokuapp.com/ deployed to Heroku
+								build finished
 
 
 		
-7) Conectar o heroku com o GITHUB
-		no Navegador, logar no github e no heroku
-		na página do heroku, selecione a aplicação
-		selecione "deploy"
-		em "Deployment method" selecione "GitHub - connect to Github"
-		depois clique no botão "Connect to Github"
-		no popup clique em "Authorize Heroku"
 
 
