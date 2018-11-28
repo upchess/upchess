@@ -1,43 +1,30 @@
 postgresql em produção
 ======================
 1) Instalar pacote nuget Npgsql.EntityFrameworkCore.PostgreSQL  ***** versão 2.1.0
-2) Alterar "Appsettings.Deployment.json". Copiar a configuração da connectionString do "Appsettings.json".
-	Conteúdo original "Appsettings.Deployment.json":
-	{
-	  "Logging": {
-		"LogLevel": {
-		  "Default": "Debug",
-		  "System": "Information",
-		  "Microsoft": "Information"
-		}
-	  }
-	}
+2) Alterar as classes Entity que possuem primary-key auto-incrementados.
+	As primary-keys com auto-incremento devem possuir o atributo como no exemplo abaixo
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int UsuarioId { get; set; }
 
-	Do "Appsettings.json" encontrar a seguinte configuração e copiar para "Appsettings.Deployment.json" imediatamente antes do últiumo "}".
-	"ConnectionStrings": {
-	  "WebApplication4Context": "Server=(localdb)\\mssqllocaldb;Database=WebApplication4Context-1410ff85-598e-4071-8309-b2d986e85f04;Trusted_Connection=True;MultipleActiveResultSets=true"
-	}
+3) Alterar as migrations que possuem a instrução "SqlServerValueGenerationStrategy.IdentityColumn" como no exemplo abaixo.
+            migrationBuilder.CreateTable(
+                name: "Mesas",
+                columns: table => new
+                {
+                    MesaId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
 
-	Conteúdo do "Appsettings.Deployment.json" após alteração (observe que foi necessário colocar uma vírgula antes do connectionString):
-	{
-	  "Logging": {
-		"LogLevel": {
-		  "Default": "Debug",
-		  "System": "Information",
-		  "Microsoft": "Information"
-		}
-	  },
-	  "ConnectionStrings": {
-		"WebApplication4Context": "Server=(localdb)\\mssqllocaldb;Database=WebApplication4Context-1410ff85-598e-4071-8309-b2d986e85f04;Trusted_Connection=True;MultipleActiveResultSets=true"
-	  }
-	}
+	Sempre que tiver isso, acrescentar a instrução:
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
 
-3) Mudar a connectionString no arquivo "Appsettings.json" para o PostgreSQL.
-	"ConnectionStrings": {
-	  "WebApplication4Context": "User ID=username;Password=password;Server=localhost;Port=5432;Database=dbname;Integrated Security=true;Pooling=true;"
-	}
-	
-	alterar os parâmetros User ID, Password, Server e Database para os valores fornecidos pelo heroku
+	Vai ficar assim (observe que foi removida uma vírgula):
+            migrationBuilder.CreateTable(
+                name: "Mesas",
+                columns: table => new
+                {
+                    MesaId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn)
+                        .Annotation("Npgsql:ValueGenerationStrategy",NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
 
 
 4) Alterar o Startup.cs para carregar os drivers do PostgreSQL quando o ambiente não for de desenvolvimento.
@@ -63,17 +50,15 @@ postgresql em produção
 					options.UseNpgsql(Configuration.GetConnectionString("WebApplication4Context")));
 		}
 
-5) Para gerar Script de migração de base de dados.
-	A) No ConfigureServices() altere "temporariamente" o texto "options.UseSqlServer" para "options.UseNpgsql".
-	B) No Package Manager Console execute o comando "Script-Migration"
-		Verifique que mostre a mensagem de que está usando o driver do PostgreSQL:
-		Entity Framework Core 2.1.4-rtm-31024 initialized 'WebApplication4Context' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL' with options: None
-	C) No ConfigureServices() retorne o texto "options.UseNpgsql" de volta para "options.UseSqlServer".
-	D) Foi gerado um arquivo "???.sql", esse arquivo é aberto no VS2017. Clicando com o botão direito na aba do arquivo, selecione "open containing Folder".
-		Renomeio o arquivo para PostgreSQL-20aa-mm-dd.sql (altere aa-mm-dd para o ano mês e dia).
-		Depois mova o arquivo para a raiz do projeto para ser fácil de achar.
+5) Como não podemos instalar o cliente PGSQL nos computadores da faculdade....
+	No final do arquivo "<projeto>.csproj" tem uma linha
+		</Project>
+	Acrescentar imediatamente antes dessa linha o seguinte texto:
+		<Target Name="PrePublishTarget" AfterTargets="Publish">
+		  <Exec Command="dotnet ef database update" />
+		</Target>
 
-
+	Isto fará com que as migrações sejam executadas ao iniciar a aplicação
 
 
 heroku
@@ -93,7 +78,10 @@ heroku
 		heroku config -a <app>
 		heroku config -a <app>-staging
 
-	Baixar pgadmin portable e instalar (https://sourceforge.net/projects/pgadminportable/
+	Baixar pgadmin portable, instalar e executar (https://sourceforge.net/projects/pgadminportable/)
+		Clicar no botão add a connection
+		heroku pg:psql -a <app> DATABASE < postgresql-2018-11-27.sql
+		
 3) Logar no heroku com o CLI
 	Abrir CMD
 		heroku login
