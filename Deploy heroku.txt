@@ -1,0 +1,137 @@
+postgresql em produção
+======================
+1) Instalar pacote nuget Npgsql.EntityFrameworkCore.PostgreSQL  ***** versão 2.1.0
+2) Alterar "Appsettings.Deployment.json". Copiar a configuração da connectionString do "Appsettings.json".
+	Conteúdo original "Appsettings.Deployment.json":
+	{
+	  "Logging": {
+		"LogLevel": {
+		  "Default": "Debug",
+		  "System": "Information",
+		  "Microsoft": "Information"
+		}
+	  }
+	}
+
+	Do "Appsettings.json" encontrar a seguinte configuração e copiar para "Appsettings.Deployment.json" imediatamente antes do últiumo "}".
+	"ConnectionStrings": {
+	  "WebApplication4Context": "Server=(localdb)\\mssqllocaldb;Database=WebApplication4Context-1410ff85-598e-4071-8309-b2d986e85f04;Trusted_Connection=True;MultipleActiveResultSets=true"
+	}
+
+	Conteúdo do "Appsettings.Deployment.json" após alteração (observe que foi necessário colocar uma vírgula antes do connectionString):
+	{
+	  "Logging": {
+		"LogLevel": {
+		  "Default": "Debug",
+		  "System": "Information",
+		  "Microsoft": "Information"
+		}
+	  },
+	  "ConnectionStrings": {
+		"WebApplication4Context": "Server=(localdb)\\mssqllocaldb;Database=WebApplication4Context-1410ff85-598e-4071-8309-b2d986e85f04;Trusted_Connection=True;MultipleActiveResultSets=true"
+	  }
+	}
+
+3) Mudar a connectionString no arquivo "Appsettings.json" para o PostgreSQL.
+	"ConnectionStrings": {
+	  "WebApplication4Context": "User ID=username;Password=password;Server=localhost;Port=5432;Database=dbname;Integrated Security=true;Pooling=true;"
+	}
+	
+	alterar os parâmetros User ID, Password, Server e Database para os valores fornecidos pelo heroku
+
+
+4) Alterar o Startup.cs para carregar os drivers do PostgreSQL quando o ambiente não for de desenvolvimento.
+	A) Obter o componente "" no construtor e armazenar
+	    public Startup(IHostingEnvironment env, IConfiguration configuration)
+        {
+            Configuration = configuration;
+            CurrentEnvironment = env;
+        }
+
+        public IConfiguration Configuration { get; }
+        private IHostingEnvironment CurrentEnvironment{ get; set; } 
+
+	B) No ConfigureServices(), incluir o driver do SQLServer se for ambiente de desenvolvimento, caso contrário incluir o driver do PostgreSQL.
+		if (CurrentEnvironment.IsDevelopment()) {
+			services.AddDbContext<WebApplication4Context>(options =>
+					options.UseSqlServer(Configuration.GetConnectionString("WebApplication4Context")));
+		}
+		else
+		{
+			// staging e production
+			services.AddDbContext<WebApplication4Context>(options =>
+					options.UseNpgsql(Configuration.GetConnectionString("WebApplication4Context")));
+		}
+
+5) Para gerar Script de migração de base de dados.
+	A) No ConfigureServices() altere "temporariamente" o texto "options.UseSqlServer" para "options.UseNpgsql".
+	B) No Package Manager Console execute o comando "Script-Migration"
+		Verifique que mostre a mensagem de que está usando o driver do PostgreSQL:
+		Entity Framework Core 2.1.4-rtm-31024 initialized 'WebApplication4Context' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL' with options: None
+	C) No ConfigureServices() retorne o texto "options.UseNpgsql" de volta para "options.UseSqlServer".
+	D) Foi gerado um arquivo "???.sql", esse arquivo é aberto no VS2017. Clicando com o botão direito na aba do arquivo, selecione "open containing Folder".
+		Renomeio o arquivo para PostgreSQL-20aa-mm-dd.sql (altere aa-mm-dd para o ano mês e dia).
+		Depois mova o arquivo para a raiz do projeto para ser fácil de achar.
+
+
+
+
+heroku
+======
+1) Instalação
+	GIT CLI - https://git-scm.com/download/win
+	Heroky CLI - https://devcenter.heroku.com/articles/heroku-cli#download-and-install
+
+2) Criar conta no Heroku
+	http://heroku.com
+
+3) Logar no heroku com o CLI
+	Abrir CMD
+		heroku login
+4) Criar aplicação no Heroku e sua contrapart staging
+	execute no cmd
+		heroku create <app>
+		heroku create <app>-staging
+5) Instalar o build-pack para ASPNET CORE
+	execute no cmd
+		heroku buildpacks:set jincod/dotnetcore -a <app>
+		heroku buildpacks:set jincod/dotnetcore -a <app>-staging
+6) Configurar o ambiente do Heroku para indicar que é produção
+	execute no cmd
+		heroku config:set ASPNETCORE_ENVIRONMENT=Production -a <app>
+		heroku config:set ASPNETCORE_ENVIRONMENT=Production -a <app>-staging
+7)
+Criar um pipeline
+	execute no cmd
+		heroku pipelines:create -a <app>
+	para a pergunta "? Pipeline name" digite o nome da sua aplicação (<app>) ou aceite o padrão. Vamos chamar este nome de <pipeline> neste documento.
+	para a pergunta "? Stage of upchess (Use arrow keys)" aceite o padrão (production) teclando enter
+	A segunda pergunta pede qual é o estágio da aplicação que está sendo configurada (produção), precisamos agora incluir a aplicação de staging.
+	execute no cmd substituindo <pipeline> pelo nome do pipeline e <app> pelo nome da aplicação.
+		heroku pipelines:add <pipeline> -a <app>-staging
+	para a pergunta "? Stage of upchess-staging (Use arrow keys)" selecione  (staging).
+
+Conectar o pipeline com o github
+	execute no cmd
+		heroku pipelines:connect <pipeline> -r github.com/upchess/upchess
+	
+	Na página do Heroku clicar em "NEW" (canto superior esquerdo) e depois em "Create new Pipeline".
+	Preencha o campo Pipeline Name com um nome que represente seu projeto
+	Em "Connect to Github" clique em "Search" para selecionar o repositório do Github que contém o projeto.
+	Selecione seu projeto no GitHub e clique em "Connect" e depois clique em "Create Pipeline".
+Incluir a aplicação no pipeline
+	Na tela de configuração do pipeline, napágina do Heroku, existem os quadro "Staging" e "Production".
+	No quadro "Staging" clique em "Add app" e selecione a sua aplicação.
+	
+
+
+		
+7) Conectar o heroku com o GITHUB
+		no Navegador, logar no github e no heroku
+		na página do heroku, selecione a aplicação
+		selecione "deploy"
+		em "Deployment method" selecione "GitHub - connect to Github"
+		depois clique no botão "Connect to Github"
+		no popup clique em "Authorize Heroku"
+
+

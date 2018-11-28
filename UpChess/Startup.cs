@@ -19,12 +19,14 @@ namespace WebApplication4
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env, IConfiguration configuration)
         {
             Configuration = configuration;
+            CurrentEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
+        private IHostingEnvironment CurrentEnvironment{ get; set; } 
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -37,8 +39,16 @@ namespace WebApplication4
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddDbContext<WebApplication4Context>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("WebApplication4Context")));
+            if (CurrentEnvironment.IsDevelopment()) {
+                services.AddDbContext<WebApplication4Context>(options =>
+                        options.UseSqlServer(Configuration.GetConnectionString("WebApplication4Context")));
+            }
+            else
+            {
+                // staging e production
+                services.AddDbContext<WebApplication4Context>(options =>
+                        options.UseNpgsql(Configuration.GetConnectionString("WebApplication4Context")));
+            }
             services.AddScoped<IJogoService, JogoService>();
         }
 
