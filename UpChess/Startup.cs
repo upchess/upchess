@@ -79,8 +79,10 @@ namespace WebApplication4
             }
             else
             {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
+                // TODO: debug
+                app.UseDeveloperExceptionPage();
+                //app.UseExceptionHandler("/Error");
+                //app.UseHsts();
             }
             app.UseSession();
             app.UseHttpsRedirection();

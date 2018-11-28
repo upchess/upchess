@@ -27,6 +27,7 @@ namespace WebApplication4.Util
             }
             else
             {
+                // TODO: debug
                 await _next(httpContext);
                 //httpContext.Response.Redirect("/Usuarios/Login", false);
             }
