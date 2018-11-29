@@ -51,12 +51,26 @@ postgresql em produção
 		}
 
 5) Como não podemos instalar o cliente PGSQL nos computadores da faculdade....
+	Vamos executar a migração de base de dados na inicialização da aplicação.
 	No final do arquivo "<projeto>.csproj" tem uma linha
 		</Project>
 	Acrescentar imediatamente antes dessa linha o seguinte texto:
 		<Target Name="PrePublishTarget" AfterTargets="Publish">
 		  <Exec Command="dotnet ef database update" />
 		</Target>
+
+	Isto fará com que as migrações sejam executadas logo após a instalação
+	Também vamos tentar rodar as migrações na inicialização da aplicação alterando o Startup.cs
+	Insira o código abaixo ao final do método ConfigureServices()
+            using (var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope())
+            {
+                using (var context = serviceScope.ServiceProvider.GetService<WebApplication4Context>())
+                {
+                    context.Database.Migrate();
+                }
+            }
 
 	Isto fará com que as migrações sejam executadas ao iniciar a aplicação
 
