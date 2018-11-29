@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20181127193639_Initial.cs" />
-    <Compile Remove="Migrations\20181127193639_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20181128184023_identityparapostgresql.cs" />
-    <Compile Remove="Migrations\20181128184023_identityparapostgresql.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

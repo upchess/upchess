@@ -70,18 +70,6 @@ heroku
 2) Criar conta no Heroku
 	http://heroku.com
 
-3) Incluir o PostgreSQL na sua conta Heroku (versão hobby-dev que limita a quantidade de registros)
-	Abrir CMD
-		heroku addons:create heroku-postgresql:hobby-dev -a <app>
-		heroku addons:create heroku-postgresql:hobby-dev -a <app>-staging
-	Ver dados do acesso ao PostgreSQL
-		heroku config -a <app>
-		heroku config -a <app>-staging
-
-	Baixar pgadmin portable, instalar e executar (https://sourceforge.net/projects/pgadminportable/)
-		Clicar no botão add a connection
-		heroku pg:psql -a <app> DATABASE < postgresql-2018-11-27.sql
-		
 3) Logar no heroku com o CLI
 	Abrir CMD
 		heroku login
@@ -93,12 +81,20 @@ heroku
 	execute no cmd
 		heroku buildpacks:set jincod/dotnetcore -a <app>
 		heroku buildpacks:set jincod/dotnetcore -a <app>-staging
-6) Configurar o ambiente do Heroku para indicar que é produção
+6) Configurar o ambiente do Heroku para indicar que é produção e staging
 	execute no cmd
 		heroku config:set ASPNETCORE_ENVIRONMENT=Production -a <app>
 		heroku config:set ASPNETCORE_ENVIRONMENT=Staging -a <app>-staging
-7)
-Criar um pipeline
+
+7) Incluir o PostgreSQL na sua conta Heroku (versão hobby-dev que limita a quantidade de registros)
+	Abrir CMD
+		heroku addons:create heroku-postgresql:hobby-dev -a <app>
+		heroku addons:create heroku-postgresql:hobby-dev -a <app>-staging
+	Ver dados do acesso ao PostgreSQL
+		heroku config -a <app>
+		heroku config -a <app>-staging
+
+8) Criar um pipeline
 	- execute no cmd
 		heroku pipelines:create -a <app>
 		para a pergunta "? Pipeline name" digite o nome da sua aplicação (<app>) ou aceite o padrão. Vamos chamar este nome de <pipeline> neste documento.
@@ -109,14 +105,14 @@ Criar um pipeline
 		heroku pipelines:add <pipeline> -a <app>-staging
 		para a pergunta "? Stage of upchess-staging (Use arrow keys)" selecione  (staging).
 
-Conectar o pipeline com o github
+9) Conectar o pipeline com o github
 	execute no cmd
 		heroku pipelines:connect <pipeline> -r <repo>
 	exemplo:
 		se a URL do repositório é https://github.com/aluno/webproject então o comando é
 		heroku pipelines:connect <pipeline> -r aluno/webproject
 	
-Fazer um deploy manual
+10) Fazer um deploy manual
 	Entre na página do Heroku e selecione seu pipeline
 	No grupo Staging, abra o menu (botão no canto superior esquerdo do grupo) e selecione "Deploy a branch".
 	Selecione "Master" e clique no botão "Deploy"
@@ -124,7 +120,16 @@ Fazer um deploy manual
 								https://upchess-staging.herokuapp.com/ deployed to Heroku
 								build finished
 
+11) Após novos commits, fazer deploy manual novamente
 
-		
+12) Quando estiver pronto, migrar para produção
+	Entre na página do Heroku e selecione seu pipeline
+	No grupo Staging, selecione "Promote to Production".
+	Aparecerá uma janela indicando que irá promover de staging para production.
+	Clique no botão "Promote"
+	Aguarde a compilação/build e clique em "View Log", no final do log deve existir mensagens como:
+								https://upchess-staging.herokuapp.com/ deployed to Heroku
+								build finished
+
 
 

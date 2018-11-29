@@ -10,7 +10,7 @@ using WebApplication4.Models;
 namespace UpChess.Migrations
 {
     [DbContext(typeof(WebApplication4Context))]
-    [Migration("20181128184436_initial")]
+    [Migration("20181129004109_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
