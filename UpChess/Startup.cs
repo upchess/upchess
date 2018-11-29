@@ -68,15 +68,6 @@ namespace WebApplication4
                         options.UseNpgsql(connStr));
             }
             services.AddScoped<IJogoService, JogoService>();
-            using (var serviceScope = app.ApplicationServices
-                .GetRequiredService<IServiceScopeFactory>()
-                .CreateScope())
-            {
-                using (var context = serviceScope.ServiceProvider.GetService<WebApplication4Context>())
-                {
-                    context.Database.Migrate();
-                }
-            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
