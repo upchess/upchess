@@ -61,7 +61,7 @@ postgresql em produção
 
 	Isto fará com que as migrações sejam executadas logo após a instalação
 	Também vamos tentar rodar as migrações na inicialização da aplicação alterando o Startup.cs
-	Insira o código abaixo ao final do método ConfigureServices()
+	Insira o código abaixo no inicio do método Configure()
             using (var serviceScope = app.ApplicationServices
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope())
