@@ -17,8 +17,8 @@ namespace WebApplication4.Util
           public async Task Invoke(HttpContext httpContext)
           {
             string path = httpContext.Request.Path;
-            if ((httpContext.Session.GetInt32("usuarioId").HasValue &&
-                httpContext.Session.GetInt32("usuarioId") != 0) ||
+            int? userId = httpContext.Session.GetInt32("usuarioId");
+            if ((userId.HasValue && userId != 0) ||
                 "/Usuarios/Cadastrar".Equals(path) ||
                 "/".Equals(path) ||
                 "/Usuarios/Login".Equals(path))
@@ -27,7 +27,21 @@ namespace WebApplication4.Util
             }
             else
             {
-                httpContext.Response.Redirect("/Usuarios/Login", false);
+                if (path.StartsWith("/api"))
+                {
+                    httpContext.Response.StatusCode = 403; //Forbidden
+                    string resp = Newtonsoft.Json.JsonConvert.SerializeObject(
+                        new {
+                            status = 1,
+                            message = "Necessário reautenticar",
+                            url = "/Usuarios/Login"
+                        });
+                    await httpContext.Response.WriteAsync(resp);
+                }
+                else
+                {
+                    httpContext.Response.Redirect("/Usuarios/Login", false);
+                }
             }
           }
     }

@@ -141,7 +141,15 @@ function sendMove(move, historico) {
         contentType: 'application/json',
         data: JSON.stringify(Jogada),
         error: function (jqXHR, textStatus, errorThrown) {
-            alert('here');
+            resp = JSON.parse(jqXHR.responseText);
+            if (resp && resp.message) {
+                alert(resp.message);
+            }
+            if (resp && resp.url && resp.url.length > 0) {
+                document.location.href = resp.url;
+            } else {
+                alert("Ocorreu um erro de comunicação com o servidor. Recarregue o tabuleiro");
+            }
         },
         success: function (result) {
             // inicia busca da jogada do oponente em 30 segundos.
@@ -162,6 +170,14 @@ function getMove() {
                 // ainda aguardando outro jogador, atualizar tempo na tela
                 setTimeout(getMove, 5000);
             } else {
+                resp = JSON.parse(jqXHR.responseText);
+                if (resp && resp.message) {
+                    alert(resp.message);
+                }
+                if (resp && resp.url && resp.url.length > 0) {
+                    document.location.href = resp.url;
+                    return;
+                }
                 // ocorreu um erro.
                 setTimeout(getMove, 5000);
             }

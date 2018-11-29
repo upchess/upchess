@@ -26,7 +26,7 @@
                     }
                 </td>
                 <td>
-                    <button asp-page-handler="Jogar" class="btn btn-sm" name="mesaId" value="@mesa.MesaId">
+                    <button formaction="?handler=Jogar" class="btn btn-sm" name="mesaId" value="@mesa.MesaId">
                         Jogar
                     </button>
                     <button type="button" onclick="sairMesa(@mesa.MesaId)" class="btn btn-primary btn-sm">Sair</button>

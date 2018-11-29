@@ -18,39 +18,41 @@
         <button type="button" onclick="criarMesa()" class="btn btn-sm">Criar Nova</button>
     </form>
 </div>
-<form method="post" id="formMesas">
-    <table class="table table-hover">
-        <thead>
-        <th>Nome</th>
-        <th>Usuários</th>
-        <th></th>
-        </thead>
-        <tbody>
-            @foreach (Mesa mesa in Model.mesas)
-            {
-                <tr>
-                    <td>@mesa.Nome</td>
-                    <td>
-                        @foreach (MesaUsuario mu in mesa.MesasUsuarios)
-                        {
-                            @if (mesa.MesasUsuarios.First() != mu)
+<form method="post">
+    <div id="formMesas">
+        <table class="table table-hover">
+            <thead>
+            <th>Nome</th>
+            <th>Usuários</th>
+            <th></th>
+            </thead>
+            <tbody>
+                @foreach (Mesa mesa in Model.mesas)
+                {
+                    <tr>
+                        <td>@mesa.Nome</td>
+                        <td>
+                            @foreach (MesaUsuario mu in mesa.MesasUsuarios)
                             {
-                                @:,
+                                @if (mesa.MesasUsuarios.First() != mu)
+                                {
+                                    @:,
+                                }
+                                @mu.Usuario.Nome
                             }
-                            @mu.Usuario.Nome
-                        }
-                    </td>
-                    <td>
-                        <button asp-page-handler="Jogar" class="btn btn-sm" name="mesaId" value="@mesa.MesaId">
-                            Jogar
-                        </button>
-                        <button type="button" onclick="sairMesa(@mesa.MesaId)" class="btn btn-primary btn-sm">Sair</button>
-                        <button type="button" onclick="excluirMesa(@mesa.MesaId)" class="btn btn-primary btn-sm">Excluir</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                        </td>
+                        <td>
+                            <button asp-page-handler="Jogar" class="btn btn-sm" name="mesaId" value="@mesa.MesaId">
+                                Jogar
+                            </button>
+                            <button type="button" onclick="sairMesa(@mesa.MesaId)" class="btn btn-primary btn-sm">Sair</button>
+                            <button type="button" onclick="excluirMesa(@mesa.MesaId)" class="btn btn-primary btn-sm">Excluir</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </form>
 @section Scripts {
     <script>
